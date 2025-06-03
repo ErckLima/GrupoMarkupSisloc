@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explicação Detalhada sobre a Fórmula Markup no SISLOC</title>
+    <style>
+        :root {
+            --primary-color: #2c7873;
+            --secondary-color: #6fb98f;
+            --accent-color: #f7b733;
+            --dark-color: #2d3436;
+            --light-color: #f9f9f9;
+            --highlight-color: #e17055;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--dark-color);
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+            margin: 0;
+            padding: 0;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        
+        header {
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.5em;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        h2 {
+            font-family: 'Montserrat', sans-serif;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 10px;
+            margin-top: 40px;
+        }
+        
+        h3 {
+            font-family: 'Poppins', sans-serif;
+            color: var(--secondary-color);
+            margin-top: 30px;
+        }
+        
+        p {
+            margin-bottom: 20px;
+            text-align: justify;
+        }
+        
+        .highlight {
+            background-color: rgba(247, 183, 51, 0.2);
+            padding: 20px;
+            border-left: 5px solid var(--accent-color);
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        
+        .formula {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: var(--light-color);
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 1.2em;
+            margin: 20px 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .example {
+            background: linear-gradient(to right, rgba(111, 185, 143, 0.1), rgba(111, 185, 143, 0.2));
+            padding: 20px;
+            border-radius: 8px;
+            margin: 25px 0;
+        }
+        
+        .example h4 {
+            color: var(--primary-color);
+            margin-top: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .calculation {
+            font-family: 'Courier New', Courier, monospace;
+            margin: 15px 0;
+            font-weight: bold;
+        }
+        
+        .image-container {
+            text-align: center;
+            margin: 30px 0;
+        }
+        
+        .image-container img {
+            max-width: 100%;
+            border-radius: 5px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .caption {
+            font-style: italic;
+            color: #666;
+            margin-top: 10px;
+            font-size: 0.9em;
+            text-align: center;
+        }
+        
+        .comparison {
+            display: flex;
+            justify-content: space-between;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        
+        .comparison-column {
+            flex: 1;
+            min-width: 300px;
+            padding: 20px;
+            background-color: var(--light-color);
+            border-radius: 8px;
+            margin: 10px;
+        }
+        
+        .comparison-column h4 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-top: 0;
+        }
+        
+        .note {
+            background-color: rgba(225, 112, 85, 0.1);
+            border-left: 5px solid var(--highlight-color);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+        }
+        
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        
+        th {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        td {
+            padding: 12px;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        
+        .conclusion {
+            background: linear-gradient(to right, rgba(44, 120, 115, 0.1), rgba(44, 120, 115, 0.2));
+            padding: 25px;
+            border-radius: 8px;
+            margin-top: 40px;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        .step-by-step {
+            background: linear-gradient(to right, rgba(225, 112, 85, 0.05), rgba(225, 112, 85, 0.15));
+            padding: 25px;
+            border-radius: 8px;
+            margin: 30px 0;
+            counter-reset: step-counter;
+        }
+        
+        .step {
+            position: relative;
+            padding-left: 50px;
+            margin-bottom: 20px;
+        }
+        
+        .step:before {
+            counter-increment: step-counter;
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            background-color: var(--highlight-color);
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .method-box {
+            border: 2px solid var(--secondary-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 30px 0;
+            background-color: rgba(111, 185, 143, 0.05);
+        }
+        
+        .method-title {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 10px 20px;
+            margin: -20px -20px 20px -20px;
+            border-radius: 6px 6px 0 0;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Explicação Detalhada sobre a Fórmula Markup no SISLOC</h1>
+        </header>
+        
+        <section>
+            <h2>O que é o Markup</h2>
+            <p>O <strong>Markup</strong> é um conceito fundamental na precificação de produtos e serviços, funcionando como um índice estratégico que permite às empresas definirem seus preços de venda de maneira estruturada e lucrativa. Este método considera não apenas o custo direto do produto ou serviço, mas incorpora também as despesas operacionais e a margem de lucro desejada pela empresa, criando assim uma abordagem completa para a formação de preços.</p>
+            
+            <p>Na sua essência, o Markup é composto por três componentes principais que, quando combinados adequadamente, garantem que o preço final seja suficiente para cobrir todos os custos e ainda gerar o retorno financeiro esperado:</p>
+            
+            <div class="highlight">
+                <h3>Componentes do Markup:</h3>
+                <ol>
+                    <li><strong>Custo do produto ou serviço:</strong> Engloba todos os gastos diretos necessários para adquirir ou produzir o item, incluindo matéria-prima, mão de obra direta e outros custos diretamente atribuíveis.</li>
+                    <li><strong>Despesas:</strong> Abrange todos os custos indiretos que a empresa precisa cobrir, como aluguel de instalações, salários administrativos, contas de utilidades (água, luz, internet) e outros gastos operacionais que não estão diretamente ligados ao produto, mas são essenciais para o funcionamento do negócio.</li>
+                    <li><strong>Margem de lucro:</strong> Representa o ganho financeiro que a empresa deseja obter com a venda, sendo um percentual definido estrategicamente conforme os objetivos financeiros e posicionamento de mercado da organização.</li>
+                </ol>
+            </div>
+            
+            <p>A compreensão adequada destes componentes é essencial para implementar o Markup de forma eficaz, garantindo que os preços estabelecidos sejam competitivos no mercado e, ao mesmo tempo, suficientes para manter a saúde financeira da empresa a longo prazo.</p>
+        </section>
+        
+        <section>
+            <h2>A Fórmula Tradicional do Markup</h2>
+            <p>Na abordagem tradicional, o cálculo do preço de venda utilizando o Markup segue uma lógica direta e intuitiva. A fórmula básica consiste em multiplicar o custo do produto por um fator que incorpora o Markup desejado:</p>
+            
+            <div class="formula">
+                Preço de Venda = Custo × (1 + Markup)
+            </div>
+            
+            <p>Nesta fórmula, o Markup é expresso como um valor decimal que representa a porcentagem de acréscimo sobre o custo. Por exemplo, um Markup de 150% seria representado como 1,5 na fórmula. Esta abordagem permite que o preço final cubra o custo do produto e ainda adicione o percentual desejado para cobrir despesas e gerar lucro.</p>
+            
+            <p>Para ilustrar como esta fórmula funciona na prática, vamos analisar alguns exemplos com diferentes percentuais de Markup, todos partindo de um custo base de R$ 100,00:</p>
+            
+            <div class="example">
+                <h4>Exemplo 1: Lucro de 150%</h4>
+                <ul>
+                    <li>Custo do produto: R$ 100,00</li>
+                    <li>Markup: 150% = 1,5</li>
+                </ul>
+                <div class="calculation">
+                    R$ 100,00 × (1 + 1,5) = R$ 100,00 × 2,5 = R$ 250,00
+                </div>
+                <p>Com um Markup de 150%, o preço de venda será R$ 250,00, o que significa que o preço cobre o custo original e gera um lucro equivalente a 150% deste custo.</p>
+            </div>
+            
+            <div class="example">
+                <h4>Exemplo 2: Lucro de 180%</h4>
+                <ul>
+                    <li>Custo do produto: R$ 100,00</li>
+                    <li>Markup: 180% = 1,8</li>
+                </ul>
+                <div class="calculation">
+                    R$ 100,00 × (1 + 1,8) = R$ 100,00 × 2,8 = R$ 280,00
+                </div>
+                <p>Neste caso, o preço de venda de R$ 280,00 cobre o custo e proporciona um lucro de 180% sobre o valor investido inicialmente.</p>
+            </div>
+            
+            <div class="example">
+                <h4>Exemplo 3: Lucro de 300%</h4>
+                <ul>
+                    <li>Custo do produto: R$ 100,00</li>
+                    <li>Markup: 300% = 3,0</li>
+                </ul>
+                <div class="calculation">
+                    R$ 100,00 × (1 + 3,0) = R$ 100,00 × 4,0 = R$ 400,00
+                </div>
+                <p>Com um Markup mais elevado de 300%, o preço de venda atinge R$ 400,00, gerando um retorno significativamente maior sobre o investimento inicial.</p>
+            </div>
+            
+            <div class="example">
+                <h4>Exemplo 4: Lucro de 500%</h4>
+                <ul>
+                    <li>Custo do produto: R$ 100,00</li>
+                    <li>Markup: 500% = 5,0</li>
+                </ul>
+                <div class="calculation">
+                    R$ 100,00 × (1 + 5,0) = R$ 100,00 × 6,0 = R$ 600,00
+                </div>
+                <p>Com 500% de Markup, o preço de venda chega a R$ 600,00, demonstrando como percentuais mais altos impactam diretamente o valor final do produto.</p>
+            </div>
+            
+            <div class="example">
+                <h4>Exemplo 5: Lucro de 900%</h4>
+                <ul>
+                    <li>Custo do produto: R$ 100,00</li>
+                    <li>Markup: 900% = 9,0</li>
+                </ul>
+                <div class="calculation">
+                    R$ 100,00 × (1 + 9,0) = R$ 100,00 × 10,0 = R$ 1.000,00
+                </div>
+                <p>No cenário mais extremo apresentado, com 900% de Markup, o preço de venda atinge R$ 1.000,00, demonstrando como este método pode ser escalado para diferentes estratégias de precificação.</p>
+            </div>
+            
+            <p>Estes exemplos ilustram claramente como o preço de venda aumenta proporcionalmente ao percentual de Markup aplicado. A abordagem tradicional é direta e intuitiva, facilitando o entendimento da relação entre custo, margem desejada e preço final.</p>
+        </section>
+        
+        <section>
+            <h2>A Fórmula Markup no SISLOC</h2>
+            <p>O sistema SISLOC utiliza uma abordagem diferenciada para o cálculo do Markup, que inverte a lógica tradicional mas chega aos mesmos resultados finais. Esta metodologia alternativa pode parecer inicialmente mais complexa, mas oferece vantagens específicas para o contexto operacional do sistema.</p>
+            
+            <div class="formula">
+                Preço de Venda = Custo / Fator Markup × 100
+            </div>
+            
+            <p>Nesta fórmula, o conceito fundamental muda, pois agora utilizamos um <strong>fator de markup</strong>, que representa o inverso do markup tradicional. Em vez de somar o lucro ao custo, dividimos o custo pelo fator para encontrar o preço de venda, multiplicando o resultado por 100 para obter o valor final.</p>
+            
+            <div class="highlight">
+                <h3>Entendendo o Fator Markup:</h3>
+                <p>O fator markup é calculado a partir do markup tradicional através da seguinte fórmula:</p>
+                <div class="formula">
+                    Fator Markup = 100 / (Markup em % + 100)
+                </div>
+                <p>Esta transformação matemática permite que o sistema mantenha a mesma lógica de precificação, apenas adaptando a forma de cálculo para melhor integração com os processos internos do SISLOC.</p>
+            </div>
+            
+            <section>
+                <h2>Forma Padrão de Calcular o Markup</h2>
+                <p>Para facilitar a compreensão e aplicação prática do conceito de Markup no SISLOC, apresentamos abaixo um guia detalhado com a forma padrão de realizar este cálculo. Este método estruturado permite que qualquer usuário, independentemente de sua familiaridade com conceitos financeiros, possa determinar com precisão o fator de markup e o preço de venda correspondente.</p>
+                
+                <div class="method-box">
+                    <div class="method-title">Método Passo a Passo para Cálculo do Markup</div>
+                    
+                    <div class="step-by-step">
+                        <div class="step">
+                            <h4>Somar o percentual de lucro desejado com 100</h4>
+                            <p>O primeiro passo consiste em adicionar 100 ao percentual de lucro que você deseja obter. Esta soma representa o total percentual que o preço de venda deve cobrir (100% do custo + o percentual de lucro desejado).</p>
+                            <div class="formula">
+                                Resultado = % de lucro desejado + 100
+                            </div>
+                        </div>
+                        
+                        <div class="step">
+                            <h4>Dividir 100 pelo resultado anterior</h4>
+                            <p>Em seguida, divide-se 100 pelo valor obtido no passo anterior. Este cálculo determina o fator de markup, que representa a proporção do custo em relação ao preço de venda final.</p>
+                            <div class="formula">
+                                Fator Markup = 100 ÷ Resultado
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h3>Segundo Passo: Aplicação do Fator Markup</h3>
+                    <div class="step-by-step">
+                        <div class="step">
+                            <h4>Dividir o preço de custo pelo fator markup</h4>
+                            <p>Uma vez calculado o fator markup, basta dividir o custo do produto por este fator para obter o preço de venda que incorpora a margem de lucro desejada.</p>
+                            <div class="formula">
+                                Preço de Venda = Preço de Custo ÷ Fator Markup
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <h4>Exemplo Prático: Lucro de 200%</h4>
+                    <p>Vamos aplicar o método passo a passo para calcular o preço de venda de um produto com custo de R$ 100,00, desejando uma margem de lucro de 200%:</p>
+                    
+                    <div class="calculation">
+                        Passo 1: 200 + 100 = 300
+                    </div>
+                    <div class="calculation">
+                        Passo 2: 100 ÷ 300 = 0,333 (Fator Markup)
+                    </div>
+                    <div class="calculation">
+                        Aplicação: R$ 100,00 ÷ 0,333 = R$ 300,30
+                    </div>
+                    
+                    <p>O preço de venda de R$ 300,30 incorpora o custo do produto e a margem de lucro desejada de 200%.</p>
+                </div>
+            </section>
+            
+            <section>
+                <h2>Cálculo Manual do Lucro</h2>
+                <p>Além do método para calcular o preço de venda a partir da margem de lucro desejada, é igualmente importante compreender como realizar o processo inverso: determinar o percentual de lucro a partir do fator markup. Este conhecimento permite uma análise completa e flexível das estratégias de precificação.</p>
+                
+                <div class="method-box">
+                    <div class="method-title">Método para Cálculo Manual do Lucro</div>
+                    
+                    <div class="step-by-step">
+                        <div class="step">
+                            <h4>Somar o percentual de lucro desejado com 100</h4>
+                            <p>Inicie somando o percentual de lucro que você deseja obter com 100, representando o total percentual que o preço deve cobrir.</p>
+                            <div class="formula">
+                                Resultado = % de lucro desejado + 100
+                            </div>
+                        </div>
+                        
+                        <div class="step">
+                            <h4>Dividir 100 pelo resultado</h4>
+                            <p>Divida 100 pelo valor obtido no passo anterior para encontrar o fator markup básico.</p>
+                            <div class="formula">
+                                Fator = 100 ÷ Resultado
+                            </div>
+                        </div>
+                        
+                        <div class="step">
+                            <h4>Multiplicar o fator por 100</h4>
+                            <p>Multiplique o fator obtido por 100 para convertê-lo em percentual, obtendo assim o fator markup expresso em porcentagem.</p>
+                            <div class="formula">
+                                Fator Markup = Fator × 100
+                            </div>
+                        </div>
+                        
+                        <div class="step">
+                            <h4>Subtrair 100 do fator markup</h4>
+                            <p>Por fim, subtraia 100 do fator markup percentual para determinar o percentual de lucro efetivo.</p>
+                            <div class="formula">
+                                % Lucro = % Markup - 100
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <h4>Exemplo Prático: Fator Markup de 0,25</h4>
+                    <p>Vamos determinar o percentual de lucro correspondente a um fator markup de 0,25:</p>
+                    
+                    <div class="calculation">
+                        Passo 3: 0,25 × 100 = 25 (% Markup)
+                    </div>
+                    <div class="calculation">
+                        Passo 4: 25 - 100 = -75
+                    </div>
+                    
+                    <p>Como o resultado é negativo, isso indica que o fator markup de 0,25 corresponde a um lucro de 300% (pois 100 ÷ 0,25 = 400, e 400 - 100 = 300%).</p>
+                </div>
+                
+                <div class="note">
+                    <p><strong>Observação importante:</strong> Na prática, o cálculo do lucro a partir do fator markup pode ser simplificado utilizando a fórmula direta:</p>
+                    <div class="formula">
+                        % Lucro = (100 ÷ Fator Markup) - 100
+                    </div>
+                    <p>Esta fórmula combina os passos 3 e 4 do método detalhado acima, proporcionando o mesmo resultado de forma mais direta.</p>
+                </div>
+            </section>
+            
+            <p>Para demonstrar como esta abordagem funciona na prática e confirmar que ela produz os mesmos resultados que o método tradicional, vamos revisitar os exemplos anteriores utilizando a fórmula do SISLOC:</p>
+            
+            <div class="example">
+                <h4>Exemplo 1: Lucro de 100%</h4>
+                <p>Primeiro, calculamos o fator markup:</p>
+                <div class="calculation">
+                    Fator Markup = 100 / (100 + 100) = 100 / 200 = 0,5
+                </div>
+                <p>Agora, aplicamos na fórmula do SISLOC:</p>
+                <div class="calculation">
+                    Preço de Venda = R$ 100,00 / 0,5 × 100 = R$ 200,00
+                </div>
+                <p>O resultado de R$ 200,00 corresponde exatamente ao que obteríamos com a fórmula tradicional para um markup de 100%.</p>
+            </div>
+            
+            <div class="example">
+                <h4>Exemplo 2: Lucro de 180%</h4>
+                <p>Calculando o fator markup:</p>
+                <div class="calculation">
+                    Fator Markup = 100 / (180 + 100) = 100 / 280 ≈ 0,357
+                </div>
+                <p>Aplicando na fórmula:</p>
+                <div class="calculation">
+                    Preço de Venda = R$ 100,00 / 0,357 × 100 = R$ 280,11
+                </div>
+                <p>O resultado é praticamente idêntico ao obtido pelo método tradicional (R$ 280,00), com uma pequena diferença devido ao arredondamento do fator.</p>
+            </div>
+            
+            <div class="example">
+                <h4>Exemplo 3: Lucro de 300%</h4>
+                <p>Calculando o fator markup:</p>
+                <div class="calculation">
+                    Fator Markup = 100 / (300 + 100) = 100 / 400 = 0,25
+                </div>
+                <p>Aplicando na fórmula:</p>
+                <div class="calculation">
+                    Preço de Venda = R$ 100,00 / 0,25 × 100 = R$ 400,00
+                </div>
+                <p>O resultado de R$ 400,00 é exatamente igual ao obtido pelo método tradicional.</p>
+            </div>
+            
+            <div class="example">
+                <h4>Exemplo 4: Lucro de 500%</h4>
+                <p>Calculando o fator markup:</p>
+                <div class="calculation">
+                    Fator Markup = 100 / (500 + 100) = 100 / 600 ≈ 0,167
+                </div>
+                <p>Aplicando na fórmula:</p>
+                <div class="calculation">
+                    Preço de Venda = R$ 100,00 / 0,167 × 100 ≈ R$ 600,00
+                </div>
+                <p>Novamente, o resultado é consistente com o método tradicional.</p>
+            </div>
+            
+            <div class="example">
+                <h4>Exemplo 5: Lucro de 900%</h4>
+                <p>Calculando o fator markup:</p>
+                <div class="calculation">
+                    Fator Markup = 100 / (900 + 100) = 100 / 1000 = 0,1
+                </div>
+                <p>Aplicando na fórmula:</p>
+                <div class="calculation">
+                    Preço de Venda = R$ 100,00 / 0,1 × 100 = R$ 1.000,00
+                </div>
+                <p>O resultado final de R$ 1.000,00 confirma a equivalência entre os dois métodos de cálculo.</p>
+            </div>
+            
+            <p>Esta abordagem alternativa utilizada pelo SISLOC, embora possa parecer mais complexa à primeira vista, mantém a mesma lógica matemática e produz resultados idênticos aos da fórmula tradicional. A principal diferença está na forma como o sistema processa internamente os cálculos, adaptando-os à sua arquitetura e fluxos de trabalho específicos.</p>
+        </section>
+        
+        <section>
+            <h2>Visualização no Sistema SISLOC</h2>
+            <p>O SISLOC implementa a fórmula de Markup de maneira intuitiva através de sua interface gráfica, permitindo que os usuários apliquem os conceitos teóricos de forma prática e eficiente. O sistema oferece ferramentas específicas para calcular e visualizar os resultados da aplicação do Markup nos preços dos produtos e serviços.</p>
+            
+            <div class="image-container">
+                <img src="imagens/tela_sisloc_1.png" alt="Tela do SISLOC mostrando a tabela de cálculo de Markup">
+                <p class="caption">Figura 1: Tabela do SISLOC demonstrando os diferentes percentuais de Markup e seus resultados.</p>
+            </div>
+            
+            <p>Na imagem acima, podemos observar como o sistema apresenta os diferentes percentuais de Markup e seus respectivos resultados em uma tabela organizada. Esta visualização facilita a compreensão da relação entre o percentual de lucro desejado e o preço final calculado pelo sistema.</p>
+            
+            <p>Para realizar o cálculo do Markup no SISLOC, o usuário deve acessar a funcionalidade específica através do ícone destacado na interface. Ao clicar neste ícone, o sistema abre uma tela dedicada onde é possível inserir o percentual de acréscimo desejado sobre o custo do produto.</p>
+            
+            <div class="image-container">
+                <img src="imagens/tela_sisloc_2.png" alt="Tela de configuração do Markup no SISLOC">
+                <p class="caption">Figura 2: Interface para configuração do percentual de Markup no sistema.</p>
+            </div>
+            
+            <p>Após acessar esta tela, o sistema apresenta um campo específico onde o usuário pode inserir o percentual de acréscimos que deseja aplicar sobre o custo do produto. Esta interface intuitiva simplifica o processo de definição do Markup, tornando-o acessível mesmo para usuários sem conhecimento aprofundado em cálculos financeiros.</p>
+            
+            <div class="image-container">
+                <img src="imagens/tela_sisloc_popup.png" alt="Popup de confirmação do cálculo de Markup">
+                <p class="caption">Figura 3: Janela de confirmação para aplicação do percentual de Markup.</p>
+            </div>
+            
+            <p>Uma vez que o percentual é inserido, o sistema realiza automaticamente o cálculo baseando-se na fórmula apresentada anteriormente (Preço de Venda = Custo / Fator Markup × 100). O resultado é então aplicado aos produtos selecionados, atualizando seus preços de venda de acordo com o Markup definido.</p>
+            
+            <div class="note">
+                <p><strong>Nota importante:</strong> O sistema SISLOC utiliza o conceito de fator de markup, que é o inverso do markup tradicional. Esta abordagem permite maior flexibilidade e precisão nos cálculos, especialmente quando se trabalha com diferentes categorias de produtos e serviços que podem requerer estratégias de precificação distintas.</p>
+            </div>
+        </section>
+        
+        <section class="conclusion">
+            <h2>Conclusão</h2>
+            <p>A fórmula de Markup implementada no SISLOC representa uma abordagem matemática alternativa, mas equivalente, ao método tradicional de cálculo de preços. Embora utilize o conceito de fator de markup (o inverso do markup tradicional), os resultados finais são idênticos, garantindo a precisão na definição dos preços de venda.</p>
+            
+            <p>Esta metodologia oferece vantagens significativas no contexto do sistema SISLOC, permitindo:</p>
+            
+            <ul>
+                <li>Maior integração com os demais módulos e funcionalidades do sistema</li>
+                <li>Flexibilidade para trabalhar com diferentes estratégias de precificação</li>
+                <li>Interface intuitiva que simplifica o processo de definição de preços</li>
+                <li>Consistência nos resultados, independentemente do percentual de lucro desejado</li>
+            </ul>
+            
+            <p>Compreender a lógica por trás desta fórmula é essencial para utilizar o sistema de forma eficiente e estratégica, garantindo que os preços definidos sejam adequados para cobrir custos, despesas operacionais e ainda gerar a margem de lucro desejada pela empresa.</p>
+            
+            <p>A visualização clara dos resultados através das tabelas e interfaces do sistema facilita a tomada de decisões relacionadas à precificação, permitindo ajustes rápidos e precisos conforme as necessidades do negócio e as condições do mercado.</p>
+            
+            <p>Os métodos detalhados para cálculo padrão e manual do markup apresentados neste documento fornecem ferramentas práticas para que qualquer usuário possa aplicar estes conceitos em seu dia a dia, independentemente de sua familiaridade prévia com cálculos financeiros ou com o sistema SISLOC.</p>
+        </section>
+        
+        <footer>
+            <p>Documento criado com base na explicação detalhada sobre a fórmula Markup no SISLOC.</p>
+        </footer>
+    </div>
+</body>
+</html>
