@@ -732,52 +732,52 @@
             </div>
 
             <div class="calc-tabs" role="tablist">
-                <button type="button" class="calc-tab" role="tab" id="tab-preco" aria-controls="painel-preco" aria-selected="true">Preço de venda</button>
-                <button type="button" class="calc-tab" role="tab" id="tab-fator" aria-controls="painel-fator" aria-selected="false" tabindex="-1">Lucro pelo fator</button>
-                <button type="button" class="calc-tab" role="tab" id="tab-reverso" aria-controls="painel-reverso" aria-selected="false" tabindex="-1">Lucro pelo preço</button>
+                <button type="button" class="calc-tab" role="tab" id="tab-preco" aria-controls="painel-preco" aria-selected="true">Preço pelo lucro</button>
+                <button type="button" class="calc-tab" role="tab" id="tab-fator" aria-controls="painel-fator" aria-selected="false" tabindex="-1">Simular % Markup</button>
+                <button type="button" class="calc-tab" role="tab" id="tab-reverso" aria-controls="painel-reverso" aria-selected="false" tabindex="-1">% Markup pelo preço</button>
             </div>
 
             <div class="calc-body">
-                <!-- Aba 1: Preço de venda a partir do custo e do % de lucro -->
+                <!-- Aba 1: custo + % de lucro -> valor a digitar no % Markup e preço -->
                 <div class="calc-panel" role="tabpanel" id="painel-preco" aria-labelledby="tab-preco">
                     <div class="calc-field">
-                        <label for="pCusto">Preço de custo (R$)</label>
-                        <input type="text" inputmode="decimal" id="pCusto" value="100,00" autocomplete="off">
+                        <label for="pCusto">Valor de compra / custo (R$)</label>
+                        <input type="text" inputmode="decimal" id="pCusto" value="10,00" autocomplete="off">
                     </div>
                     <div class="calc-field">
-                        <label for="pLucro">% de lucro desejado (Markup em %)</label>
-                        <input type="text" inputmode="decimal" id="pLucro" value="200" autocomplete="off">
+                        <label for="pLucro">% de lucro desejado</label>
+                        <input type="text" inputmode="decimal" id="pLucro" value="100" autocomplete="off">
                     </div>
-                    <label class="calc-check">
-                        <input type="checkbox" id="pArredondar">
-                        Arredondar o fator para 3 casas decimais (como nos exemplos do documento)
-                    </label>
                     <div class="calc-result" id="pResultado" aria-live="polite"></div>
                 </div>
 
-                <!-- Aba 2: % de lucro a partir do fator markup -->
+                <!-- Aba 2: simular o que o SISLOC faz com um % Markup digitado -->
                 <div class="calc-panel" role="tabpanel" id="painel-fator" aria-labelledby="tab-fator" hidden>
                     <div class="calc-field">
-                        <label for="fFator">Fator Markup (decimal, ex.: 0,25)</label>
-                        <input type="text" inputmode="decimal" id="fFator" value="0,25" autocomplete="off">
+                        <label for="fCusto">Valor de compra / custo (R$)</label>
+                        <input type="text" inputmode="decimal" id="fCusto" value="10,00" autocomplete="off">
+                    </div>
+                    <div class="calc-field">
+                        <label for="fFator">% Markup informado no Grupo Markup (ex.: 50,0000000)</label>
+                        <input type="text" inputmode="decimal" id="fFator" value="50" autocomplete="off">
                     </div>
                     <div class="calc-result" id="fResultado" aria-live="polite"></div>
                 </div>
 
-                <!-- Aba 3: % de lucro a partir do custo e do preço de venda -->
+                <!-- Aba 3: custo + preço de venda -> % Markup a digitar -->
                 <div class="calc-panel" role="tabpanel" id="painel-reverso" aria-labelledby="tab-reverso" hidden>
                     <div class="calc-field">
-                        <label for="rCusto">Preço de custo (R$)</label>
-                        <input type="text" inputmode="decimal" id="rCusto" value="100,00" autocomplete="off">
+                        <label for="rCusto">Valor de compra / custo (R$)</label>
+                        <input type="text" inputmode="decimal" id="rCusto" value="10,00" autocomplete="off">
                     </div>
                     <div class="calc-field">
-                        <label for="rVenda">Preço de venda (R$)</label>
-                        <input type="text" inputmode="decimal" id="rVenda" value="400,00" autocomplete="off">
+                        <label for="rVenda">Preço à vista desejado (R$)</label>
+                        <input type="text" inputmode="decimal" id="rVenda" value="20,00" autocomplete="off">
                     </div>
                     <div class="calc-result" id="rResultado" aria-live="polite"></div>
                 </div>
 
-                <p class="calc-hint">Fórmulas usadas: Fator Markup = 100 ÷ (% lucro + 100) · Preço de Venda = Custo ÷ Fator Markup · % Lucro = (100 ÷ Fator Markup) − 100.</p>
+                <p class="calc-hint">Fórmula do SISLOC: Preço à vista = Custo ÷ % Markup × 100, onde % Markup = 100 ÷ (% lucro + 100) × 100. O campo <strong>% Markup</strong> do Grupo Markup recebe o fator <strong>em percentual</strong> (ex.: 50 para 100% de lucro). Digitar 0,5 faz o preço ficar 200 vezes o custo.</p>
             </div>
         </div>
     </div>
@@ -805,80 +805,88 @@
         }
         function erro(el, msg) { el.innerHTML = '<span class="calc-error">' + msg + '</span>'; }
 
-        // ---- Aba 1: preço de venda ----
+        var CASAS = 7; // o campo % Markup do SISLOC trabalha com 7 casas decimais
+
+        // ---- Aba 1: preço pelo lucro ----
         function calcPreco() {
             var out = document.getElementById('pResultado');
             var custo = parseBR(document.getElementById('pCusto').value);
             var lucro = parseBR(document.getElementById('pLucro').value);
-            var arred = document.getElementById('pArredondar').checked;
-            if (!isFinite(custo) || custo < 0) return erro(out, 'Informe um preço de custo válido.');
+            if (!isFinite(custo) || custo < 0) return erro(out, 'Informe um custo válido.');
             if (!isFinite(lucro) || lucro <= -100) return erro(out, 'Informe um % de lucro maior que −100.');
 
             var resultado = lucro + 100;
             var fator = 100 / resultado;
-            var fatorUsado = arred ? Math.round(fator * 1000) / 1000 : fator;
-            var preco = custo / fatorUsado;
+            var markup = Number((fator * 100).toFixed(CASAS));
+            var preco = custo / markup * 100;
 
             out.innerHTML =
                 '<div class="calc-kpis">' +
-                    '<div><div class="label">Preço de venda (SISLOC)</div><div class="big">' + moeda(preco) + '</div></div>' +
-                    '<div><div class="label">Fator Markup</div><div class="big">' + num(fatorUsado, arred ? 3 : 6) + '</div></div>' +
+                    '<div><div class="label">Digite no campo % Markup</div><div class="big">' + fmt(markup, CASAS) + '</div></div>' +
+                    '<div><div class="label">Preço à vista</div><div class="big">' + moeda(preco) + '</div></div>' +
                     '<div><div class="label">Lucro em R$</div><div class="big">' + moeda(preco - custo) + '</div></div>' +
                 '</div>' +
                 '<ol class="calc-steps">' +
                     '<li>Resultado = ' + num(lucro) + ' + 100 = ' + num(resultado) + '</li>' +
-                    '<li>Fator Markup = 100 ÷ ' + num(resultado) + ' = ' + num(fatorUsado, arred ? 3 : 6) + '</li>' +
-                    '<li>Preço de Venda = ' + moeda(custo) + ' ÷ ' + num(fatorUsado, arred ? 3 : 6) + ' = ' + moeda(preco) + '</li>' +
+                    '<li>Fator = 100 ÷ ' + num(resultado) + ' = ' + num(fator, 7) + '</li>' +
+                    '<li>% Markup = ' + num(fator, 7) + ' × 100 = ' + fmt(markup, CASAS) + '</li>' +
+                    '<li>Preço à vista = ' + moeda(custo) + ' ÷ ' + num(markup, CASAS) + ' × 100 = ' + moeda(preco) + '</li>' +
                 '</ol>';
         }
 
-        // ---- Aba 2: lucro pelo fator ----
+        // ---- Aba 2: simular % Markup ----
         function calcFator() {
             var out = document.getElementById('fResultado');
-            var fator = parseBR(document.getElementById('fFator').value);
-            if (!isFinite(fator) || fator <= 0) return erro(out, 'Informe um fator maior que zero (ex.: 0,25).');
-            if (fator > 1) {
-                return erro(out, 'O fator deve estar em decimal (ex.: 0,25). Se você tem o fator em %, divida por 100: ' + num(fator) + '% → ' + num(fator / 100) + '.');
-            }
-            var markup = 100 / fator;
-            var lucro = markup - 100;
+            var custo = parseBR(document.getElementById('fCusto').value);
+            var markup = parseBR(document.getElementById('fFator').value);
+            if (!isFinite(custo) || custo < 0) return erro(out, 'Informe um custo válido.');
+            if (!isFinite(markup) || markup <= 0) return erro(out, 'Informe um % Markup maior que zero.');
+            var preco = custo / markup * 100;
+            var lucro = (10000 / markup) - 100;
+            var alerta = markup < 1
+                ? '<p class="calc-error" style="margin:10px 0 0">Atenção: com % Markup abaixo de 1 o preço fica mais de 100 vezes o custo. Provavelmente o valor foi digitado como decimal (ex.: 0,5 em vez de 50).</p>'
+                : (markup > 100 ? '<p class="calc-error" style="margin:10px 0 0">Atenção: % Markup acima de 100 gera preço menor que o custo (lucro negativo).</p>' : '');
             out.innerHTML =
                 '<div class="calc-kpis">' +
+                    '<div><div class="label">Preço à vista</div><div class="big">' + moeda(preco) + '</div></div>' +
                     '<div><div class="label">% de lucro</div><div class="big">' + num(lucro, 2) + '%</div></div>' +
+                    '<div><div class="label">Lucro em R$</div><div class="big">' + moeda(preco - custo) + '</div></div>' +
                 '</div>' +
                 '<ol class="calc-steps">' +
-                    '<li>100 ÷ ' + num(fator, 6) + ' = ' + num(markup, 4) + '</li>' +
-                    '<li>% Lucro = ' + num(markup, 4) + ' − 100 = ' + num(lucro, 2) + '%</li>' +
-                '</ol>';
+                    '<li>Preço à vista = ' + moeda(custo) + ' ÷ ' + num(markup, CASAS) + ' × 100 = ' + moeda(preco) + '</li>' +
+                    '<li>% Lucro = (100 ÷ (' + num(markup, CASAS) + ' ÷ 100)) − 100 = ' + num(lucro, 2) + '%</li>' +
+                '</ol>' + alerta;
         }
 
-        // ---- Aba 3: lucro pelo preço ----
+        // ---- Aba 3: % Markup pelo preço ----
         function calcReverso() {
             var out = document.getElementById('rResultado');
             var custo = parseBR(document.getElementById('rCusto').value);
             var venda = parseBR(document.getElementById('rVenda').value);
-            if (!isFinite(custo) || custo <= 0) return erro(out, 'Informe um preço de custo maior que zero.');
-            if (!isFinite(venda) || venda <= 0) return erro(out, 'Informe um preço de venda maior que zero.');
-            var fator = custo / venda;
-            var lucro = (100 / fator) - 100;
+            if (!isFinite(custo) || custo <= 0) return erro(out, 'Informe um custo maior que zero.');
+            if (!isFinite(venda) || venda <= 0) return erro(out, 'Informe um preço à vista maior que zero.');
+            var markup = Number((custo / venda * 100).toFixed(CASAS));
+            var lucro = (10000 / markup) - 100;
             out.innerHTML =
                 '<div class="calc-kpis">' +
-                    '<div><div class="label">% de lucro (Markup)</div><div class="big">' + num(lucro, 2) + '%</div></div>' +
-                    '<div><div class="label">Fator Markup</div><div class="big">' + num(fator, 6) + '</div></div>' +
+                    '<div><div class="label">Digite no campo % Markup</div><div class="big">' + fmt(markup, CASAS) + '</div></div>' +
+                    '<div><div class="label">% de lucro</div><div class="big">' + num(lucro, 2) + '%</div></div>' +
                     '<div><div class="label">Lucro em R$</div><div class="big">' + moeda(venda - custo) + '</div></div>' +
                 '</div>' +
                 '<ol class="calc-steps">' +
-                    '<li>Fator Markup = ' + moeda(custo) + ' ÷ ' + moeda(venda) + ' = ' + num(fator, 6) + '</li>' +
-                    '<li>% Lucro = (100 ÷ ' + num(fator, 6) + ') − 100 = ' + num(lucro, 2) + '%</li>' +
+                    '<li>% Markup = ' + moeda(custo) + ' ÷ ' + moeda(venda) + ' × 100 = ' + fmt(markup, CASAS) + '</li>' +
+                    '<li>% Lucro = (100 ÷ (' + num(markup, CASAS) + ' ÷ 100)) − 100 = ' + num(lucro, 2) + '%</li>' +
                 '</ol>';
         }
 
-        ['pCusto', 'pLucro', 'pArredondar'].forEach(function (id) {
+        ['pCusto', 'pLucro'].forEach(function (id) {
             var el = document.getElementById(id);
             el.addEventListener('input', calcPreco);
             el.addEventListener('change', calcPreco);
         });
-        document.getElementById('fFator').addEventListener('input', calcFator);
+        ['fCusto', 'fFator'].forEach(function (id) {
+            document.getElementById(id).addEventListener('input', calcFator);
+        });
         ['rCusto', 'rVenda'].forEach(function (id) {
             document.getElementById(id).addEventListener('input', calcReverso);
         });
