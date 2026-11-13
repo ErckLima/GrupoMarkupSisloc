@@ -263,10 +263,10 @@
         }
         .topbar-title { font-weight: 600; font-size: 0.95em; opacity: 0.95; }
         .btn-calc {
-            background: var(--accent-color);
-            color: var(--dark-color);
-            border: none;
-            border-radius: 6px;
+            background: white;
+            color: var(--primary-color);
+            border: 2px solid white;
+            border-radius: 999px;
             padding: 10px 18px;
             font-size: 1em;
             font-weight: 700;
@@ -276,7 +276,7 @@
             gap: 8px;
             transition: transform .1s, box-shadow .2s;
         }
-        .btn-calc:hover { box-shadow: 0 3px 10px rgba(0,0,0,.25); }
+        .btn-calc:hover { background: rgba(255,255,255,0.12); color: white; box-shadow: 0 3px 10px rgba(0,0,0,.2); }
         .btn-calc:active { transform: translateY(1px); }
         .btn-calc:focus-visible, .calc-close:focus-visible, .calc-tab:focus-visible {
             outline: 3px solid white; outline-offset: 2px;
@@ -818,7 +818,6 @@
             var fator = 100 / resultado;
             var fatorUsado = arred ? Math.round(fator * 1000) / 1000 : fator;
             var preco = custo / fatorUsado;
-            var tradicional = custo * (1 + lucro / 100);
 
             out.innerHTML =
                 '<div class="calc-kpis">' +
@@ -830,9 +829,7 @@
                     '<li>Resultado = ' + num(lucro) + ' + 100 = ' + num(resultado) + '</li>' +
                     '<li>Fator Markup = 100 ÷ ' + num(resultado) + ' = ' + num(fatorUsado, arred ? 3 : 6) + '</li>' +
                     '<li>Preço de Venda = ' + moeda(custo) + ' ÷ ' + num(fatorUsado, arred ? 3 : 6) + ' = ' + moeda(preco) + '</li>' +
-                '</ol>' +
-                '<p class="calc-hint" style="margin-bottom:0">Conferência pela fórmula tradicional: ' + moeda(custo) + ' × (1 + ' + num(lucro / 100) + ') = <strong>' + moeda(tradicional) + '</strong>' +
-                (arred && Math.abs(preco - tradicional) >= 0.005 ? ' (a diferença vem do arredondamento do fator)' : '') + '.</p>';
+                '</ol>';
         }
 
         // ---- Aba 2: lucro pelo fator ----
@@ -848,7 +845,6 @@
             out.innerHTML =
                 '<div class="calc-kpis">' +
                     '<div><div class="label">% de lucro</div><div class="big">' + num(lucro, 2) + '%</div></div>' +
-                    '<div><div class="label">Multiplicador do custo</div><div class="big">' + num(markup / 100, 4) + '×</div></div>' +
                 '</div>' +
                 '<ol class="calc-steps">' +
                     '<li>100 ÷ ' + num(fator, 6) + ' = ' + num(markup, 4) + '</li>' +
