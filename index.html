@@ -242,9 +242,123 @@
             font-family: 'Poppins', sans-serif;
             font-size: 1.2em;
         }
+
+        /* ===== Barra superior + Calculadora de Markup ===== */
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 900;
+            background: var(--primary-color);
+            color: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+        .topbar-inner {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+        .topbar-title { font-weight: 600; font-size: 0.95em; opacity: 0.95; }
+        .btn-calc {
+            background: var(--accent-color);
+            color: var(--dark-color);
+            border: none;
+            border-radius: 6px;
+            padding: 10px 18px;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: transform .1s, box-shadow .2s;
+        }
+        .btn-calc:hover { box-shadow: 0 3px 10px rgba(0,0,0,.25); }
+        .btn-calc:active { transform: translateY(1px); }
+        .btn-calc:focus-visible, .calc-close:focus-visible, .calc-tab:focus-visible {
+            outline: 3px solid white; outline-offset: 2px;
+        }
+
+        .calc-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(45, 52, 54, 0.55);
+            display: none;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 30px 12px;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+        .calc-overlay.open { display: flex; }
+        .calc-modal {
+            background: white;
+            width: 100%;
+            max-width: 640px;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,.3);
+            overflow: hidden;
+        }
+        .calc-header {
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .calc-header h2 {
+            color: white; border: none; margin: 0; padding: 0; font-size: 1.3em;
+        }
+        .calc-close {
+            background: transparent; border: none; color: white;
+            font-size: 1.8em; line-height: 1; cursor: pointer; padding: 0 4px;
+        }
+        .calc-tabs { display: flex; border-bottom: 1px solid #ddd; background: var(--light-color); }
+        .calc-tab {
+            flex: 1; padding: 12px 8px; border: none; background: transparent;
+            cursor: pointer; font-weight: 600; color: #666; font-size: .9em;
+            border-bottom: 3px solid transparent;
+        }
+        .calc-tab[aria-selected="true"] { color: var(--primary-color); border-bottom-color: var(--primary-color); background: white; }
+        .calc-body { padding: 20px; }
+        .calc-panel[hidden] { display: none; }
+        .calc-field { margin-bottom: 14px; }
+        .calc-field label { display: block; font-weight: 600; margin-bottom: 4px; font-size: .95em; }
+        .calc-field input[type="text"] {
+            width: 100%; box-sizing: border-box; padding: 10px 12px; font-size: 1.1em;
+            border: 1px solid #ccc; border-radius: 6px;
+        }
+        .calc-field input[type="text"]:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(44,120,115,.2); }
+        .calc-check { display: flex; align-items: center; gap: 8px; font-size: .9em; color: #555; margin-bottom: 14px; }
+        .calc-result {
+            background: rgba(111,185,143,.12);
+            border-left: 5px solid var(--secondary-color);
+            border-radius: 6px;
+            padding: 14px 16px;
+        }
+        .calc-result .big { font-size: 1.6em; font-weight: 700; color: var(--primary-color); }
+        .calc-result .label { font-size: .85em; color: #666; }
+        .calc-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 12px; }
+        .calc-steps { font-family: 'Courier New', Courier, monospace; font-size: .9em; margin: 8px 0 0; padding-left: 18px; }
+        .calc-steps li { margin-bottom: 4px; }
+        .calc-error { color: var(--highlight-color); font-weight: 600; }
+        .calc-hint { font-size: .85em; color: #666; margin-top: 12px; }
     </style>
 </head>
 <body>
+    <div class="topbar">
+        <div class="topbar-inner">
+            <span class="topbar-title">Markup no SISLOC</span>
+            <button type="button" class="btn-calc" id="btnAbrirCalc" aria-haspopup="dialog" aria-controls="calcOverlay">
+                <span aria-hidden="true">🧮</span> Calculadora de Markup
+            </button>
+        </div>
+    </div>
+
     <div class="container">
         <header>
             <h1>Explicação Detalhada sobre a Fórmula Markup no SISLOC</h1>
@@ -608,5 +722,214 @@
             <p>Documento criado com base na explicação detalhada sobre a fórmula Markup no SISLOC.</p>
         </footer>
     </div>
+
+    <!-- ===== Calculadora de Markup ===== -->
+    <div class="calc-overlay" id="calcOverlay" aria-hidden="true">
+        <div class="calc-modal" role="dialog" aria-modal="true" aria-labelledby="calcTitulo">
+            <div class="calc-header">
+                <h2 id="calcTitulo">🧮 Calculadora de Markup</h2>
+                <button type="button" class="calc-close" id="btnFecharCalc" aria-label="Fechar calculadora">&times;</button>
+            </div>
+
+            <div class="calc-tabs" role="tablist">
+                <button type="button" class="calc-tab" role="tab" id="tab-preco" aria-controls="painel-preco" aria-selected="true">Preço de venda</button>
+                <button type="button" class="calc-tab" role="tab" id="tab-fator" aria-controls="painel-fator" aria-selected="false" tabindex="-1">Lucro pelo fator</button>
+                <button type="button" class="calc-tab" role="tab" id="tab-reverso" aria-controls="painel-reverso" aria-selected="false" tabindex="-1">Lucro pelo preço</button>
+            </div>
+
+            <div class="calc-body">
+                <!-- Aba 1: Preço de venda a partir do custo e do % de lucro -->
+                <div class="calc-panel" role="tabpanel" id="painel-preco" aria-labelledby="tab-preco">
+                    <div class="calc-field">
+                        <label for="pCusto">Preço de custo (R$)</label>
+                        <input type="text" inputmode="decimal" id="pCusto" value="100,00" autocomplete="off">
+                    </div>
+                    <div class="calc-field">
+                        <label for="pLucro">% de lucro desejado (Markup em %)</label>
+                        <input type="text" inputmode="decimal" id="pLucro" value="200" autocomplete="off">
+                    </div>
+                    <label class="calc-check">
+                        <input type="checkbox" id="pArredondar">
+                        Arredondar o fator para 3 casas decimais (como nos exemplos do documento)
+                    </label>
+                    <div class="calc-result" id="pResultado" aria-live="polite"></div>
+                </div>
+
+                <!-- Aba 2: % de lucro a partir do fator markup -->
+                <div class="calc-panel" role="tabpanel" id="painel-fator" aria-labelledby="tab-fator" hidden>
+                    <div class="calc-field">
+                        <label for="fFator">Fator Markup (decimal, ex.: 0,25)</label>
+                        <input type="text" inputmode="decimal" id="fFator" value="0,25" autocomplete="off">
+                    </div>
+                    <div class="calc-result" id="fResultado" aria-live="polite"></div>
+                </div>
+
+                <!-- Aba 3: % de lucro a partir do custo e do preço de venda -->
+                <div class="calc-panel" role="tabpanel" id="painel-reverso" aria-labelledby="tab-reverso" hidden>
+                    <div class="calc-field">
+                        <label for="rCusto">Preço de custo (R$)</label>
+                        <input type="text" inputmode="decimal" id="rCusto" value="100,00" autocomplete="off">
+                    </div>
+                    <div class="calc-field">
+                        <label for="rVenda">Preço de venda (R$)</label>
+                        <input type="text" inputmode="decimal" id="rVenda" value="400,00" autocomplete="off">
+                    </div>
+                    <div class="calc-result" id="rResultado" aria-live="polite"></div>
+                </div>
+
+                <p class="calc-hint">Fórmulas usadas: Fator Markup = 100 ÷ (% lucro + 100) · Preço de Venda = Custo ÷ Fator Markup · % Lucro = (100 ÷ Fator Markup) − 100.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    (function () {
+        var overlay = document.getElementById('calcOverlay');
+        var btnAbrir = document.getElementById('btnAbrirCalc');
+        var btnFechar = document.getElementById('btnFecharCalc');
+
+        // ---- Utilitários de número (formato brasileiro) ----
+        function parseBR(txt) {
+            if (txt == null) return NaN;
+            var s = String(txt).trim().replace(/R\$|\s|%/g, '');
+            if (s === '') return NaN;
+            if (s.indexOf(',') !== -1) s = s.replace(/\./g, '').replace(',', '.');
+            return Number(s);
+        }
+        function fmt(n, casas) {
+            return n.toLocaleString('pt-BR', { minimumFractionDigits: casas, maximumFractionDigits: casas });
+        }
+        function moeda(n) { return 'R$ ' + fmt(n, 2); }
+        function num(n, max) {
+            return n.toLocaleString('pt-BR', { maximumFractionDigits: max == null ? 4 : max });
+        }
+        function erro(el, msg) { el.innerHTML = '<span class="calc-error">' + msg + '</span>'; }
+
+        // ---- Aba 1: preço de venda ----
+        function calcPreco() {
+            var out = document.getElementById('pResultado');
+            var custo = parseBR(document.getElementById('pCusto').value);
+            var lucro = parseBR(document.getElementById('pLucro').value);
+            var arred = document.getElementById('pArredondar').checked;
+            if (!isFinite(custo) || custo < 0) return erro(out, 'Informe um preço de custo válido.');
+            if (!isFinite(lucro) || lucro <= -100) return erro(out, 'Informe um % de lucro maior que −100.');
+
+            var resultado = lucro + 100;
+            var fator = 100 / resultado;
+            var fatorUsado = arred ? Math.round(fator * 1000) / 1000 : fator;
+            var preco = custo / fatorUsado;
+            var tradicional = custo * (1 + lucro / 100);
+
+            out.innerHTML =
+                '<div class="calc-kpis">' +
+                    '<div><div class="label">Preço de venda (SISLOC)</div><div class="big">' + moeda(preco) + '</div></div>' +
+                    '<div><div class="label">Fator Markup</div><div class="big">' + num(fatorUsado, arred ? 3 : 6) + '</div></div>' +
+                    '<div><div class="label">Lucro em R$</div><div class="big">' + moeda(preco - custo) + '</div></div>' +
+                '</div>' +
+                '<ol class="calc-steps">' +
+                    '<li>Resultado = ' + num(lucro) + ' + 100 = ' + num(resultado) + '</li>' +
+                    '<li>Fator Markup = 100 ÷ ' + num(resultado) + ' = ' + num(fatorUsado, arred ? 3 : 6) + '</li>' +
+                    '<li>Preço de Venda = ' + moeda(custo) + ' ÷ ' + num(fatorUsado, arred ? 3 : 6) + ' = ' + moeda(preco) + '</li>' +
+                '</ol>' +
+                '<p class="calc-hint" style="margin-bottom:0">Conferência pela fórmula tradicional: ' + moeda(custo) + ' × (1 + ' + num(lucro / 100) + ') = <strong>' + moeda(tradicional) + '</strong>' +
+                (arred && Math.abs(preco - tradicional) >= 0.005 ? ' (a diferença vem do arredondamento do fator)' : '') + '.</p>';
+        }
+
+        // ---- Aba 2: lucro pelo fator ----
+        function calcFator() {
+            var out = document.getElementById('fResultado');
+            var fator = parseBR(document.getElementById('fFator').value);
+            if (!isFinite(fator) || fator <= 0) return erro(out, 'Informe um fator maior que zero (ex.: 0,25).');
+            if (fator > 1) {
+                return erro(out, 'O fator deve estar em decimal (ex.: 0,25). Se você tem o fator em %, divida por 100: ' + num(fator) + '% → ' + num(fator / 100) + '.');
+            }
+            var markup = 100 / fator;
+            var lucro = markup - 100;
+            out.innerHTML =
+                '<div class="calc-kpis">' +
+                    '<div><div class="label">% de lucro</div><div class="big">' + num(lucro, 2) + '%</div></div>' +
+                    '<div><div class="label">Multiplicador do custo</div><div class="big">' + num(markup / 100, 4) + '×</div></div>' +
+                '</div>' +
+                '<ol class="calc-steps">' +
+                    '<li>100 ÷ ' + num(fator, 6) + ' = ' + num(markup, 4) + '</li>' +
+                    '<li>% Lucro = ' + num(markup, 4) + ' − 100 = ' + num(lucro, 2) + '%</li>' +
+                '</ol>';
+        }
+
+        // ---- Aba 3: lucro pelo preço ----
+        function calcReverso() {
+            var out = document.getElementById('rResultado');
+            var custo = parseBR(document.getElementById('rCusto').value);
+            var venda = parseBR(document.getElementById('rVenda').value);
+            if (!isFinite(custo) || custo <= 0) return erro(out, 'Informe um preço de custo maior que zero.');
+            if (!isFinite(venda) || venda <= 0) return erro(out, 'Informe um preço de venda maior que zero.');
+            var fator = custo / venda;
+            var lucro = (100 / fator) - 100;
+            out.innerHTML =
+                '<div class="calc-kpis">' +
+                    '<div><div class="label">% de lucro (Markup)</div><div class="big">' + num(lucro, 2) + '%</div></div>' +
+                    '<div><div class="label">Fator Markup</div><div class="big">' + num(fator, 6) + '</div></div>' +
+                    '<div><div class="label">Lucro em R$</div><div class="big">' + moeda(venda - custo) + '</div></div>' +
+                '</div>' +
+                '<ol class="calc-steps">' +
+                    '<li>Fator Markup = ' + moeda(custo) + ' ÷ ' + moeda(venda) + ' = ' + num(fator, 6) + '</li>' +
+                    '<li>% Lucro = (100 ÷ ' + num(fator, 6) + ') − 100 = ' + num(lucro, 2) + '%</li>' +
+                '</ol>';
+        }
+
+        ['pCusto', 'pLucro', 'pArredondar'].forEach(function (id) {
+            var el = document.getElementById(id);
+            el.addEventListener('input', calcPreco);
+            el.addEventListener('change', calcPreco);
+        });
+        document.getElementById('fFator').addEventListener('input', calcFator);
+        ['rCusto', 'rVenda'].forEach(function (id) {
+            document.getElementById(id).addEventListener('input', calcReverso);
+        });
+
+        // ---- Abas ----
+        var tabs = Array.prototype.slice.call(document.querySelectorAll('.calc-tab'));
+        function ativarAba(tab) {
+            tabs.forEach(function (t) {
+                var sel = t === tab;
+                t.setAttribute('aria-selected', sel ? 'true' : 'false');
+                t.tabIndex = sel ? 0 : -1;
+                document.getElementById(t.getAttribute('aria-controls')).hidden = !sel;
+            });
+            tab.focus();
+        }
+        tabs.forEach(function (t, i) {
+            t.addEventListener('click', function () { ativarAba(t); });
+            t.addEventListener('keydown', function (e) {
+                if (e.key === 'ArrowRight') ativarAba(tabs[(i + 1) % tabs.length]);
+                if (e.key === 'ArrowLeft') ativarAba(tabs[(i - 1 + tabs.length) % tabs.length]);
+            });
+        });
+
+        // ---- Abrir / fechar ----
+        function abrir() {
+            overlay.classList.add('open');
+            overlay.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+            var painel = document.querySelector('.calc-panel:not([hidden]) input[type="text"]');
+            if (painel) painel.focus();
+        }
+        function fechar() {
+            overlay.classList.remove('open');
+            overlay.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+            btnAbrir.focus();
+        }
+        btnAbrir.addEventListener('click', abrir);
+        btnFechar.addEventListener('click', fechar);
+        overlay.addEventListener('click', function (e) { if (e.target === overlay) fechar(); });
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && overlay.classList.contains('open')) fechar();
+        });
+        if (location.hash === '#calculadora') abrir();
+
+        calcPreco(); calcFator(); calcReverso();
+    })();
+    </script>
 </body>
 </html>
